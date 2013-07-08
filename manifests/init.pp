@@ -45,4 +45,9 @@ class xl2tpd (
 		content => template('xl2tpd/options.xl2tpd.erb'),
 	}
 
+	service { 'xl2tpd':
+		ensure    => running,
+		subscribe => File['/etc/xl2tpd/xl2tpd.conf',
+	}
+
 }
