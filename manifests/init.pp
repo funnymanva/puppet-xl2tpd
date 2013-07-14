@@ -47,7 +47,7 @@ class xl2tpd (
 
 	service { 'xl2tpd':
 		ensure    => running,
-		subscribe => File['/etc/xl2tpd/xl2tpd.conf',
+		subscribe => File['/etc/xl2tpd/xl2tpd.conf'],
 	}
 
 }
