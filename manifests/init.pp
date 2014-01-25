@@ -1,53 +1,44 @@
+# ex: syntax=puppet si ts=4 sw=4 et
+
 class xl2tpd (
-	$min_dynamic_ip = '192.168.254.10',
-	$max_dynamic_ip = '192.168.254.250',
-	$tunnel_ip      = '192.168.254.1',
-	$dns_servers	= [ '8.8.4.4', '8.8.8.8' ],
+    $package_name,
+    $version,
+    $service_name,
+    $min_dynamic_ip = '192.168.254.10',
+    $max_dynamic_ip = '192.168.254.250',
+    $tunnel_ip      = '192.168.254.1',
+    $dns_servers    = [ '8.8.4.4', '8.8.8.8' ],
+    $debug = false,
 ) {
+    File {
+        ensure => present,
+        owner => 'root',
+        group => 'root',
+        mode  => '0644',
+    }
 
-	package { 'xl2tpd':
-		ensure => installed,
-	}
 
-	concat { '/etc/ppp/chap-secrets':
-		owner => 'root',
-		group => 'root',
-		mode  => 0640,
-	}
+    package { 'xl2tpd':
+        name   => $package_name,
+        ensure => $version,
+    }
 
-	concat::fragment { 'chap-secrets preamble':
-		target  => '/etc/ppp/chap-secrets',
-		order   => '00',
-		content => "; secrets go here\n",
-	}
+    file { '/etc/xl2tpd/xl2tpd.conf':
+        content => template('xl2tpd/xl2tpd.conf.erb'),
+        require => Package['xl2tpd'],
+    }
 
-	define user (
-		$password,
-	) {
-		concat::fragment { "chap-secrets user $name":
-			target  => '/etc/ppp/chap-secrets',
-			order   => 10,
-			content => template('xl2tpd/chap-secret.erb'),
-		}
-	}
+    file { '/etc/xl2tpd/ppp-options':
+        content => template('xl2tpd/ppp-options.erb'),
+        require => Package['xl2tpd'],
+    }
 
-	file { '/etc/xl2tpd/xl2tpd.conf':
-		owner   => 'root',
-		group   => 'root',
-		mode    => 0644,
-		content => template('xl2tpd/xl2tpd.conf.erb'),
-	}
-
-	file { '/etc/ppp/options.xl2tpd':
-		owner   => 'root',
-		group   => 'root',
-		mode    => 0644,
-		content => template('xl2tpd/options.xl2tpd.erb'),
-	}
-
-	service { 'xl2tpd':
-		ensure    => running,
-		subscribe => File['/etc/xl2tpd/xl2tpd.conf'],
-	}
-
+    service { 'xl2tpd':
+        name       => $service_name,
+        ensure     => running,
+        pattern    => '/usr/sbin/xl2tpd',
+        hasstatus  => false,
+        hasrestart => true,
+        subscribe  => File['/etc/xl2tpd/xl2tpd.conf', '/etc/xl2tpd/ppp-options'],
+    }
 }
