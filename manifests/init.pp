@@ -8,7 +8,9 @@ class xl2tpd (
     $max_dynamic_ip = '192.168.254.250',
     $tunnel_ip      = '192.168.254.1',
     $dns_servers    = [ '8.8.4.4', '8.8.8.8' ],
-    $debug = false,
+    $mtu            = '1300',
+    $mru            = '1300',
+    $debug          = false,
 ) {
     File {
         ensure => present,

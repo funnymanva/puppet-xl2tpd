@@ -6,3 +6,6 @@ require-chap
 <%- Array(@dns_servers).each do |dns_server| -%>
 ms-dns <%= dns_server %>
 <%- end -%>
+
+mru <%= @mru %>
+mtu <%= @mtu %>
