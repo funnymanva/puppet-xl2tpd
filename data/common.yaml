@@ -1,2 +1,3 @@
 ---
 xl2tpd::version: latest
+xl2tpd::ppp_version: latest

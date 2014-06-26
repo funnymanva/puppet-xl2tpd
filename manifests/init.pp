@@ -4,9 +4,12 @@ class xl2tpd (
     $package_name,
     $version,
     $service_name,
+    $ppp_package_name,
+    $ppp_version,
     $min_dynamic_ip = '192.168.254.10',
     $max_dynamic_ip = '192.168.254.250',
     $tunnel_ip      = '192.168.254.1',
+    $tunnel_network = '192.168.254.0/24',
     $dns_servers    = [ '8.8.4.4', '8.8.8.8' ],
     $debug = false,
 ) {
@@ -16,7 +19,11 @@ class xl2tpd (
         group => 'root',
         mode  => '0644',
     }
-
+    
+    package { 'ppp':
+        name => $ppp_package_name,
+        ensure => $ppp_version,
+    }
 
     package { 'xl2tpd':
         name   => $package_name,
@@ -28,9 +35,9 @@ class xl2tpd (
         require => Package['xl2tpd'],
     }
 
-    file { '/etc/xl2tpd/ppp-options':
-        content => template('xl2tpd/ppp-options.erb'),
-        require => Package['xl2tpd'],
+    file { '/etc/ppp/options.xl2tpd':
+        content => template('xl2tpd/options.xl2tpd.erb'),
+        require => [Package['xl2tpd'], Package['ppp']],
     }
 
     service { 'xl2tpd':
@@ -39,6 +46,6 @@ class xl2tpd (
         pattern    => '/usr/sbin/xl2tpd',
         hasstatus  => false,
         hasrestart => true,
-        subscribe  => File['/etc/xl2tpd/xl2tpd.conf', '/etc/xl2tpd/ppp-options'],
+        subscribe  => File['/etc/xl2tpd/xl2tpd.conf', '/etc/ppp/options.xl2tpd'],
     }
 }

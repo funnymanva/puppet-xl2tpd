@@ -1,3 +1,4 @@
 ---
 xl2tpd::package_name: 'xl2tpd'
 xl2tpd::service_name: 'xl2tpd'
+xl2tpd::ppp_package_name: 'ppp'
