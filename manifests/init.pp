@@ -40,6 +40,16 @@ class xl2tpd (
         require => [Package['xl2tpd'], Package['ppp']],
     }
 
+    file { '/etc/ppp/pap-secrets':
+        ensure  => 'present',
+        path    => '/etc/ppp/pap-secrets',
+        source  => 'puppet:///modules/xl2tpd/pap-secrets',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0600',
+        require => Package['ppp'],
+    }
+
     service { 'xl2tpd':
         name       => $service_name,
         ensure     => running,
