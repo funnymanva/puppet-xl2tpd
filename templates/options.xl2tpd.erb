@@ -1,14 +1,22 @@
+ipcp-accept-local
+ipcp-accept-remote
 <%- @dns_servers.each do |dns_server| -%>
 ms-dns <%= dns_server %>
 <%- end -%>
+asyncmap 0
 auth
 mtu 1200
-mru 1000
+mru 1200
 crtscts
+lock
 hide-password
 modem
 name l2tpd
 proxyarp
 lcp-echo-interval 30
 lcp-echo-failure 4
+connect-delay 5000
+<%- if @debug -%>
+debug
+<%- end -%>
 login

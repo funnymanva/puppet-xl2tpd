@@ -1,9 +1,13 @@
 [global]
 ipsec saref = yes
+<% if @listen_addr -%>
+listen-addr = <%= @listen_addr %>
+<% end -%>
 
 [lns default]
 ip range = <%= @min_dynamic_ip %>-<%= @max_dynamic_ip %>
 local ip = <%= @tunnel_ip %>
+assign ip = yes
 require authentication = yes
 length bit = yes
 pppoptfile = /etc/ppp/options.xl2tpd

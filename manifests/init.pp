@@ -11,6 +11,7 @@ class xl2tpd (
     $tunnel_ip      = '192.168.254.1',
     $tunnel_network = '192.168.254.0/24',
     $dns_servers    = [ '8.8.4.4', '8.8.8.8' ],
+    $listen_addr = undef,
     $debug = false,
 ) {
     File {
